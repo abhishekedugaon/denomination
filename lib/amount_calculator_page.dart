@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'amount_calculator_controller.dart';
-import 'history_amount.dart'; // Import controller
+import 'controller/amount_calculator_controller.dart';
+import 'amount_history.dart'; // Import controller
 
-class AmountCalculatorPage extends StatefulWidget {
-  const AmountCalculatorPage({Key? key}) : super(key: key);
+class AmountCalculator extends StatefulWidget {
+  const AmountCalculator({Key? key}) : super(key: key);
 
   @override
-  _AmountCalculatorPageState createState() => _AmountCalculatorPageState();
+  _AmountCalculatorState createState() => _AmountCalculatorState();
 }
 
-class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
+class _AmountCalculatorState extends State<AmountCalculator> {
   final controller = Get.put(AmountCalculatorController());
   String? selectedCategory = 'General'; // Default dropdown value
   TextEditingController remarkController = TextEditingController();
@@ -50,7 +50,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
     ).then((value) {
       if (value == 'history') {
         print('History selected');
-       Navigator.push(context, MaterialPageRoute(builder: (context) => HistoryPage(),));
+       Navigator.push(context, MaterialPageRoute(builder: (context) => HistoryScreen(),));
       }
     });
   }
@@ -331,7 +331,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                     children: [
                       SizedBox(
                         width: screenWidth/5,
-                        child:  Text(
+                        child: Text(
                           '₹ $num x',
                           style: const TextStyle(color: Colors.white, fontSize: 18),
                         ),
@@ -385,7 +385,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                             focusedBorder: const OutlineInputBorder(
                               borderSide: BorderSide(color: Colors.blue, width: 0.5), // Blue border when focused
                             ),
-                            contentPadding: const EdgeInsets.all(2),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Added padding inside the input field
                           ),
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.digitsOnly,
@@ -394,12 +394,10 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                             FocusScope.of(context).nextFocus();
                           },
                         ),
-
                       ),
                       SizedBox(width: screenWidth/30),
                       Obx(() {
-                        print('heloo..');
-                        print(controller.results.value);
+
                         int length = controller.results.value[index].toString().length;
                         double fontSize;
 

@@ -6,11 +6,11 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:share/share.dart';
 
-import 'amount_calculator_controller.dart';
+import 'controller/amount_calculator_controller.dart';
 import 'amount_calculator_page.dart';
 
-class HistoryPage extends StatelessWidget {
-   HistoryPage({super.key});
+class HistoryScreen extends StatelessWidget {
+   HistoryScreen({super.key});
   var box = Hive.box('dataBox');
    final controller = Get.find<AmountCalculatorController>();
 
@@ -25,7 +25,7 @@ class HistoryPage extends StatelessWidget {
           onTap: () {
             Navigator.of(context).pop();
           },
-            child: Icon(Icons.arrow_back,color: Colors.white,)
+            child: const Icon(Icons.arrow_back,color: Colors.white,)
         ),
         title: const Text('History', style: TextStyle(color: Colors.white,fontSize: 20)),
       ),
@@ -70,7 +70,7 @@ class HistoryPage extends StatelessWidget {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(builder: (context) {
-                            return AmountCalculatorPage();
+                            return AmountCalculator();
                           }), (route) => false,
                         );
                         print('Edit button pressed');
@@ -242,9 +242,10 @@ class HistoryPage extends StatelessWidget {
      // // Initialize the List<TextEditingController>
 
      controller.controllers = counts.map((count) {
-       // Create a new TextEditingController and set the initial text as the count value
-       return TextEditingController(text: count.toString());
+       // Create a new TextEditingController with an empty string if the count is 0, otherwise use the count
+       return TextEditingController(text: count == 0 ? '' : count.toString());
      }).toList();
+
      controller.calculateTotal();
      print(controller.controllers);
    }
