@@ -21,9 +21,9 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
   void _showMenu(BuildContext context) async {
     await showMenu<String>(
       context: context,
-      position: RelativeRect.fromLTRB(1000.0, 0.0, 0.0, 0.0),
+      position: const RelativeRect.fromLTRB(1000.0, 0.0, 0.0, 0.0),
       items: [
-        PopupMenuItem<String>(
+        const PopupMenuItem<String>(
           value: 'history',
           child: Row(
             children: [
@@ -60,6 +60,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     final textScale = MediaQuery.of(context).textScaleFactor;
+
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -264,7 +265,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
             expandedHeight: screenHeight/5.5,
               actions: [
                 IconButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: const Icon(Icons.more_vert),
                   onPressed: () {
                    _showMenu(context);
                   },
@@ -279,7 +280,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                 ),
                 titlePadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 title: controller.totalAmount.value != 0
-                    ?Column(
+                    ? Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -288,7 +289,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                       style: TextStyle(
                         fontSize: 15 * textScale,
                         color: Colors.white,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     FittedBox(
@@ -307,7 +308,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                       )
                   ],
                 )
-                    :const Text('Denomination'),
+                    :const Text('Denomination',style: TextStyle(color: Colors.white),),
               );
             })
 
@@ -338,67 +339,62 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                       SizedBox(width: screenWidth/50),
                       SizedBox(
                         width: screenWidth/3.5,
-                        child:  TextField(
+                        child: TextField(
                           controller: controller.controllers[index],
                           keyboardType: TextInputType.number,
-
                           onChanged: (value) {
                             controller.calculateTotal();
-                            // print(controller.results.value[index] > 0);
-                            // print(controller.results.value[index]);
                           },
-                          style: const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white), // White text for contrast
                           decoration: InputDecoration(
-                              filled: true,
-                              // fillColor: Colors.white,
-                              suffixIcon: Obx((){
-                                return  Visibility(
-                                  visible:controller.results.value[index] > 0 ,
-                                  child: Container(
-                                    margin: EdgeInsets.only(right: 7),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white
-                                    ),
-                                    child: InkWell(
-                                      onTap: () {
-                                        controller.controllers[index].clear();
-                                        controller.results.value.removeAt(index);
-                                        controller.results.value.insert(index, 0);
-                                        controller.calculateTotal();
-                                        // print('results22.${controller.results.value}');
-                                      },
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: Colors.black,
-                                        size: 13, // Reduced icon size
-                                      ),
+                            filled: true,
+                            fillColor: Colors.grey.shade900, // Black background for the TextField
+                            suffixIcon: Obx(() {
+                              return Visibility(
+                                visible: controller.results.value[index] > 0,
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 7),
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white, // White background for the icon container
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      controller.controllers[index].clear();
+                                      controller.results.value.removeAt(index);
+                                      controller.results.value.insert(index, 0);
+                                      controller.calculateTotal();
+                                    },
+                                    child: const Icon(
+                                      Icons.close,
+                                      color: Colors.black, // Black icon for contrast with the white container
+                                      size: 13, // Reduced icon size
                                     ),
                                   ),
-                                );
-                              }),
-
-                              suffixIconConstraints: BoxConstraints(
-                                minWidth: 20, // Minimum width of the icon container
-                                minHeight: 15, // Minimum height of the icon container
-                              ),
-                              border: const OutlineInputBorder(),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey,width: 0.5), // Default grey border
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blue, width:0.5), // Blue border when focused, with thickness of 2
-                              ),
-                              contentPadding: EdgeInsets.all(2)
+                                ),
+                              );
+                            }),
+                            suffixIconConstraints: const BoxConstraints(
+                              minWidth: 20, // Minimum width of the icon container
+                              minHeight: 15, // Minimum height of the icon container
+                            ),
+                            border: const OutlineInputBorder(),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey, width: 0.5), // Default grey border
+                            ),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blue, width: 0.5), // Blue border when focused
+                            ),
+                            contentPadding: const EdgeInsets.all(2),
                           ),
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.digitsOnly,
                           ],
                           onEditingComplete: () {
-                            // Move focus to the next TextField
                             FocusScope.of(context).nextFocus();
                           },
                         ),
+
                       ),
                       SizedBox(width: screenWidth/30),
                       Obx(() {
@@ -418,7 +414,6 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                         else {
                           fontSize = 10;
                         }
-
                         return controller.results.value[index].toString().length > 15
                             ?  Expanded(
                           child: Text(
@@ -454,7 +449,6 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
         spacing: 10, // space between FAB options
         spaceBetweenChildren: 8, // space between options and main FAB
         children: [
-
           SpeedDialChild(
             child: const Icon(Icons.refresh),
             label: 'Clear',
@@ -475,7 +469,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
             },
           ),
           SpeedDialChild(
-            child: Icon(Icons.file_download_outlined),
+            child: const Icon(Icons.file_download_outlined),
             label: 'Save',
             backgroundColor: Colors.grey[800],
             foregroundColor: Colors.white,
@@ -503,9 +497,9 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
           title: Stack(
             children: [
               Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  'Save Entry',
+                  '',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -513,7 +507,7 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                 right: 0,
                 top: 0,
                 child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.red),
+                  icon: const Icon(Icons.close, color: Colors.red,size: 30,),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -524,7 +518,6 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Dropdown for category selection
               DropdownButtonFormField<String>(
                 value: selectedCategory,
                 dropdownColor: Colors.grey[800],
@@ -542,17 +535,15 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                 items: ['General', 'Income', 'Expense']
                     .map((category) => DropdownMenuItem<String>(
                   value: category,
-                  child: Text(category, style: TextStyle(color: Colors.white)),
-                ))
-                    .toList(),
+                  child: Text(category, style: const TextStyle(color: Colors.white)),
+                )).toList(),
                 onChanged: (value) {
                   setState(() {
                     selectedCategory = value!;
                   });
                 },
               ),
-              SizedBox(height: 16),
-              // Text field for remarks
+             const SizedBox(height: 16),
               TextField(
                 controller: remarkController,
                 maxLines: 2,
@@ -560,16 +551,18 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                   hintText: 'Fill your remark (if any)',
                   hintStyle: TextStyle(color: Colors.grey[600]),
                   filled: true,
-                  border: OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey,width: 0.5), // Default grey border
+                  fillColor: Colors.grey.shade900, // Black background for the TextField
+                  border: const OutlineInputBorder(),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey, width: 0.5), // Default grey border
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue, width:0.5), // Blue border when focused, with thickness of 2
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue, width: 0.5), // Blue border when focused
                   ),
                 ),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white), // White text for contrast
               ),
+
             ],
           ),
           actionsAlignment: MainAxisAlignment.center,
@@ -599,25 +592,35 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              'Confirmation',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blueAccent,
-                              ),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                 Text(
+                                  'Confirmation',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blueAccent,
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 10),
-                            Text(
-                              'Are you sure?',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ),
+                            const SizedBox(height: 5),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Are you sure?',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
@@ -625,33 +628,33 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
+                                    padding: EdgeInsets.symmetric(horizontal: 15),
                                   ),
                                   onPressed: () {
                                     Navigator.of(context).pop(); // Close dialog
                                   },
-                                  child: Text(
+                                  child:const Text(
                                     'NO',
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Colors.white,fontSize: 13),
                                   ),
                                 ),
+                                 const SizedBox(width: 5,),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.blueAccent,
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
+                                    padding: EdgeInsets.symmetric(horizontal: 15),
                                   ),
                                   onPressed: () {
                                     // Save data and close dialogs
                                     String category = selectedCategory!;
                                     String remark = remarkController.text;
                                     controller.saveData(category, remark);
-
                                     Navigator.of(context).pop(); // Close confirmation dialog
                                     Navigator.of(context).pop(); // Close main dialog
-
+                                    FocusScope.of(context).unfocus();
                                     remarkController.clear();
                                     selectedCategory = 'General';
                                     controller.results = List<int>.generate(10, (index) => 0).obs;
@@ -663,9 +666,9 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
 
                                     });
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     'Yes',
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: Colors.white,fontSize: 13),
                                   ),
                                 ),
                               ],
@@ -677,9 +680,9 @@ class _AmountCalculatorPageState extends State<AmountCalculatorPage> {
                   },
                 );
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10.0),
-                child: Text('Save', style: TextStyle(fontSize: 16)),
+              child: const Padding(
+                padding:  EdgeInsets.symmetric(horizontal: 40.0, vertical: 10.0),
+                child: Text('Save', style: TextStyle(fontSize: 17,fontWeight: FontWeight.bold)),
               ),
             ),
           ],

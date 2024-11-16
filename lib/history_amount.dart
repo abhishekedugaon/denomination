@@ -1,30 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:share/share.dart';
 
+import 'amount_calculator_controller.dart';
+import 'amount_calculator_page.dart';
+
 class HistoryPage extends StatelessWidget {
    HistoryPage({super.key});
   var box = Hive.box('dataBox');
+   final controller = Get.find<AmountCalculatorController>();
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-      // backgroundColor: Colors.grey.withOpacity(0.95),
+      backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black.withOpacity(0.65),
-        title: const Text('History', style: TextStyle(fontSize: 20)),
+        leading: GestureDetector(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+            child: Icon(Icons.arrow_back,color: Colors.white,)
+        ),
+        title: const Text('History', style: TextStyle(color: Colors.white,fontSize: 20)),
       ),
       body: ValueListenableBuilder(
         valueListenable: box.listenable(),
         builder: (context, Box box, _) {
           if (box.isEmpty) {
-            return const Center(
+            return  const Center(
               child: Text(
-                'No history found',
-                style: TextStyle(color: Colors.black, fontSize: 18),
+                'No any history ',
+                style: TextStyle(color: Colors.white, fontSize: 15,),
               ),
             );
           }
@@ -54,9 +66,17 @@ class HistoryPage extends StatelessWidget {
                     ),
                     SlidableAction(
                       onPressed: (context) {
-                        // Add edit action if needed
+                        getDenominationCounts(entry);
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return AmountCalculatorPage();
+                          }), (route) => false,
+                        );
                         print('Edit button pressed');
                       },
+
+
                       backgroundColor: Colors.blue,
                       foregroundColor: Colors.white,
                       icon: Icons.edit,
@@ -94,7 +114,7 @@ class HistoryPage extends StatelessWidget {
                               '₹ ${entry['amount'].toString().replaceAllMapped(RegExp(r'(\d)(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                               style: TextStyle(color: Colors.blue[200], fontSize: 20, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(height: 4),
+                           const  SizedBox(height: 4),
                             Text(
                               entry['remark'] ?? '',
                               style: TextStyle(color: Colors.grey[400], fontSize: 16),
@@ -194,9 +214,44 @@ class HistoryPage extends StatelessWidget {
     // Share.share('abcasjkasjkd');
     Share.share(generateDenominationMessage(entry));
   }
+    getDenominationCounts(entry) {
+     List getDeatils = entry['result_amount']??[];
+     int twoThousand_count = getDeatils[0] != 0 ?getDeatils[0]~/2000:0;
+     int fiveHundred_count = getDeatils[1] != 0 ?getDeatils[1]~/500:0;
+     int twohundred_count = getDeatils[2] != 0 ?getDeatils[2]~/200:0;
+     int onehundred_count = getDeatils[3] != 0 ?getDeatils[3]~/100:0;
+     int fifty_count = getDeatils[4] != 0 ?getDeatils[4]~/50:0;
+     int twenty_count = getDeatils[5] != 0 ?getDeatils[5]~/20:0;
+     int ten_count =getDeatils[6] != 0 ?getDeatils[6]~/10:0;
+     int five_count = getDeatils[7] != 0 ?getDeatils[7]~/5:0;
+     int two_count = getDeatils[8] != 0 ?getDeatils[8]~/2:0;
+     int one_count =getDeatils[9] != 0 ?getDeatils[9]~/1:0;
 
+     List<int> counts = [
+       twoThousand_count,
+       fiveHundred_count,
+       twohundred_count,
+       onehundred_count,
+       fifty_count,
+       twenty_count,
+       ten_count,
+       five_count,
+       two_count,
+       one_count
+     ];
+     // // Initialize the List<TextEditingController>
+
+     controller.controllers = counts.map((count) {
+       // Create a new TextEditingController and set the initial text as the count value
+       return TextEditingController(text: count.toString());
+     }).toList();
+     controller.calculateTotal();
+     print(controller.controllers);
+   }
+
+
+   /// cteate a function to share data
    String generateDenominationMessage(entry) {
-
     List getDeatils = entry['result_amount']??[];
     int twoThousand_count = getDeatils[0] != 0 ?getDeatils[0]~/2000:0;
     int fiveHundred_count = getDeatils[1] != 0 ?getDeatils[1]~/500:0;
@@ -209,8 +264,9 @@ class HistoryPage extends StatelessWidget {
     int two_count = getDeatils[8] != 0 ?getDeatils[8]~/2:0;
     int one_count =getDeatils[9] != 0 ?getDeatils[9]~/1:0;
      return '''
-              Denomination
-              ${entry['category']} Denomination
+              
+              ${entry['category']}
+               Denomination
               ${entry['date']} ${entry['time']}
               ${entry['remark']}
               --------------------------------

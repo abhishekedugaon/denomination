@@ -44,6 +44,8 @@ dependencies:
   number_to_words: ^1.0.0
   share:
   flutter_share:
+  change_app_package_name: ^1.4.0
+  colorful_safe_area: ^1.0.0
 
 dev_dependencies:
   flutter_test:
